@@ -1,20 +1,21 @@
-const path = require('path');
-const express = require('express');
-const swaggerUi = require('swagger-ui-express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+const path = require("path");
+const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+require("dotenv").config();
 
-const AppError = require('./utils/error');
-const swaggerSpec = require('./config/swagger');
-const response = require('./utils/response');
-const adminRoutes = require('./routes/admin');
-const movieRoutes = require('./routes/movie');
+const AppError = require("./utils/error");
+const swaggerSpec = require("./config/swagger");
+const response = require("./utils/response");
+const adminRoutes = require("./routes/admin");
+const movieRoutes = require("./routes/movie");
+const categoryRoutes = require("./routes/category");
 
 // Import loggers from config
-const { httpLogger, appLogger } = require('./config/logger');
+const { httpLogger, appLogger } = require("./config/logger");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  standardHeaders: 'draft-7',
+  standardHeaders: "draft-7",
   legacyHeaders: false,
 });
 
@@ -37,12 +38,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve static files from the 'uploads' folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Add your routes...
-app.use('/api/admin', adminRoutes);
-app.use('/api/movie', movieRoutes);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/admin", adminRoutes);
+app.use("/api/movie/v1", movieRoutes);
+app.use("/api/category/v1", categoryRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Handle 404 errors
 app.use((req, res, next) => {
@@ -57,7 +59,8 @@ app.use((error, req, res, next) => {
   appLogger.error(`Error: ${error.message}`, { stack: error.stack });
 
   let status = 500;
-  let message = 'Something went wrong, please try again later or contact support.';
+  let message =
+    "Something went wrong, please try again later or contact support.";
   let data = null;
   let success = false;
 

@@ -1,12 +1,12 @@
-const path = require('path');
-const swaggerJSDoc = require('swagger-jsdoc');
+const path = require("path");
+const swaggerJSDoc = require("swagger-jsdoc");
 
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'OTT',
-    version: '1.0.0',
-    description: 'APIs Documentation',
+    title: "OTT",
+    version: "1.0.0",
+    description: "APIs Documentation",
     contact: {
       name: process.env.NAME,
       email: process.env.EMAIL,
@@ -15,11 +15,11 @@ const swaggerDefinition = {
   servers: [
     {
       url: process.env.DOMAIN,
-      description: 'Production server',
+      description: "Production server",
     },
     {
       url: process.env.LOCAL_HOST,
-      description: 'Development server',
+      description: "Development server",
     },
     // add more hosts...
   ],
@@ -28,8 +28,9 @@ const swaggerDefinition = {
 var options = {
   swaggerDefinition: swaggerDefinition,
   apis: [
-    path.join(__dirname, '../docs/swagger/admin.js'),
-    path.join(__dirname, '../docs/swagger/movie.js'),
+    path.join(__dirname, "../docs/swagger/admin.js"),
+    path.join(__dirname, "../docs/swagger/movie.js"),
+    path.join(__dirname, "../docs/swagger/category.js"),
     // add more paths...
   ],
 };
