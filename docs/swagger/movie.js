@@ -14,6 +14,8 @@
  *       required:
  *         - name
  *         - description
+ *         - source
+ *         - categoryId
  *       properties:
  *         id:
  *           type: string
@@ -30,6 +32,16 @@
  *         videoLink:
  *           type: string
  *           description: The URL of the movie video or external link
+ *         source:
+ *           type: string
+ *           description: The source of the movie
+ *         status:
+ *           type: string
+ *           enum: [PUBLISHED, PENDING]
+ *           description: The publication status of the movie
+ *         categoryId:
+ *           type: string
+ *           description: The ID of the category the movie belongs to
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -83,6 +95,13 @@
  *                 format: binary
  *               videoLink:
  *                 type: string
+ *               source:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [PUBLISHED, PENDING]
+ *               categoryId:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Movie created successfully
@@ -110,6 +129,17 @@
  *         schema:
  *           type: string
  *         description: Search query for name or description
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PUBLISHED, PENDING]
+ *         description: Filter by movie status
  *     responses:
  *       200:
  *         description: Movies retrieved successfully
@@ -162,6 +192,13 @@
  *                 format: binary
  *               videoLink:
  *                 type: string
+ *               source:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [PUBLISHED, PENDING]
+ *               categoryId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Movie updated successfully
@@ -206,6 +243,17 @@
  *         schema:
  *           type: integer
  *         description: Number of items per page
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PUBLISHED, PENDING]
+ *         description: Filter by movie status
  *     responses:
  *       200:
  *         description: Movies retrieved successfully

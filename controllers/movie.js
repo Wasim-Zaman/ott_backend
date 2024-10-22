@@ -1,17 +1,20 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const Joi = require('joi');
-const { deleteFile } = require('../utils/file');
+const Joi = require("joi");
+const { deleteFile } = require("../utils/file");
 
-const CustomError = require('../utils/error');
-const response = require('../utils/response');
+const CustomError = require("../utils/error");
+const response = require("../utils/response");
 
-// Joi validation schema
+// Update Joi validation schema
 const movieSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
   imageUrl: Joi.string().uri().optional(),
   videoLink: Joi.string().uri().optional(),
+  source: Joi.string().required(),
+  status: Joi.string().valid("PUBLISHED", "PENDING").default("PENDING"),
+  categoryId: Joi.string().required(),
 });
 
 // Create a new movie
@@ -39,10 +42,16 @@ exports.createMovie = async (req, res, next) => {
     }
 
     const newMovie = await prisma.movie.create({
-      data: value,
+      data: {
+        ...value,
+        category: { connect: { id: value.categoryId } },
+      },
+      include: { category: true },
     });
 
-    res.status(201).json(response(201, true, 'Movie created successfully', newMovie));
+    res
+      .status(201)
+      .json(response(201, true, "Movie created successfully", newMovie));
   } catch (error) {
     if (imagePath) await deleteFile(imagePath);
     if (videoPath) await deleteFile(videoPath);
@@ -54,32 +63,31 @@ exports.createMovie = async (req, res, next) => {
 // Get all movies with pagination
 exports.getMovies = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, query = '' } = req.query;
+    const { page = 1, limit = 10, query = "", categoryId, status } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
+    const where = {
+      OR: [{ name: { contains: query } }, { description: { contains: query } }],
+    };
+    if (categoryId) where.categoryId = categoryId;
+    if (status) where.status = status;
+
     const movies = await prisma.movie.findMany({
-      where: {
-        OR: [{ name: { contains: query } }, { description: { contains: query } }],
-      },
+      where,
       skip,
       take: Number(limit),
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: "desc" },
+      include: { category: true },
     });
 
-    const totalMovies = await prisma.movie.count({
-      where: {
-        OR: [{ name: { contains: query } }, { description: { contains: query } }],
-      },
-    });
+    const totalMovies = await prisma.movie.count({ where });
 
     if (!movies.length) {
-      throw new CustomError('No movies found', 404);
+      throw new CustomError("No movies found", 404);
     }
 
     res.status(200).json(
-      response(200, true, 'Movies retrieved successfully', {
+      response(200, true, "Movies retrieved successfully", {
         data: movies,
         totalPages: Math.ceil(totalMovies / Number(limit)),
         currentPage: Number(page),
@@ -96,13 +104,18 @@ exports.getMovies = async (req, res, next) => {
 exports.getMovieById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const movie = await prisma.movie.findUnique({ where: { id } });
+    const movie = await prisma.movie.findUnique({
+      where: { id },
+      include: { category: true },
+    });
 
     if (!movie) {
-      throw new CustomError('Movie not found', 404);
+      throw new CustomError("Movie not found", 404);
     }
 
-    res.status(200).json(response(200, true, 'Movie found successfully', movie));
+    res
+      .status(200)
+      .json(response(200, true, "Movie found successfully", movie));
   } catch (error) {
     console.log(`Error in getMovieById: ${error.message}`);
     next(error);
@@ -121,21 +134,27 @@ exports.updateMovieById = async (req, res, next) => {
 
     const existingMovie = await prisma.movie.findUnique({ where: { id } });
     if (!existingMovie) {
-      throw new CustomError('Movie not found', 404);
+      throw new CustomError("Movie not found", 404);
     }
 
     if (req.files) {
       if (req.files.image) {
         imagePath = req.files.image[0].path;
         value.imageUrl = imagePath;
-        if (existingMovie.imageUrl && (await fileExists(existingMovie.imageUrl))) {
+        if (
+          existingMovie.imageUrl &&
+          (await fileExists(existingMovie.imageUrl))
+        ) {
           await deleteFile(existingMovie.imageUrl);
         }
       }
       if (req.files.movie) {
         videoPath = req.files.movie[0].path;
         value.videoLink = videoPath;
-        if (existingMovie.videoLink && (await fileExists(existingMovie.videoLink))) {
+        if (
+          existingMovie.videoLink &&
+          (await fileExists(existingMovie.videoLink))
+        ) {
           await deleteFile(existingMovie.videoLink);
         }
       }
@@ -147,10 +166,16 @@ exports.updateMovieById = async (req, res, next) => {
 
     const updatedMovie = await prisma.movie.update({
       where: { id },
-      data: value,
+      data: {
+        ...value,
+        category: { connect: { id: value.categoryId } },
+      },
+      include: { category: true },
     });
 
-    res.status(200).json(response(200, true, 'Movie updated successfully', updatedMovie));
+    res
+      .status(200)
+      .json(response(200, true, "Movie updated successfully", updatedMovie));
   } catch (error) {
     if (imagePath) await deleteFile(imagePath);
     if (videoPath) await deleteFile(videoPath);
@@ -165,7 +190,7 @@ exports.deleteMovieById = async (req, res, next) => {
     const { id } = req.params;
     const movie = await prisma.movie.findUnique({ where: { id } });
     if (!movie) {
-      throw new CustomError('Movie not found', 404);
+      throw new CustomError("Movie not found", 404);
     }
 
     if (movie.imageUrl && (await fileExists(movie.imageUrl))) {
@@ -176,10 +201,10 @@ exports.deleteMovieById = async (req, res, next) => {
     }
 
     await prisma.movie.delete({ where: { id } });
-    res.status(200).json(response(200, true, 'Movie deleted successfully'));
+    res.status(200).json(response(200, true, "Movie deleted successfully"));
   } catch (error) {
-    if (error.code === 'P2025') {
-      next(new CustomError('Movie not found', 404));
+    if (error.code === "P2025") {
+      next(new CustomError("Movie not found", 404));
     } else {
       console.log(`Error in deleteMovieById: ${error.message}`);
       next(error);
@@ -190,21 +215,25 @@ exports.deleteMovieById = async (req, res, next) => {
 // Get paginated movies
 exports.getPaginatedMovies = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, categoryId, status } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
+    const where = {};
+    if (categoryId) where.categoryId = categoryId;
+    if (status) where.status = status;
+
     const movies = await prisma.movie.findMany({
+      where,
       skip,
       take: Number(limit),
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: "desc" },
+      include: { category: true },
     });
 
-    const totalMovies = await prisma.movie.count();
+    const totalMovies = await prisma.movie.count({ where });
 
     res.status(200).json(
-      response(200, true, 'Movies retrieved successfully', {
+      response(200, true, "Movies retrieved successfully", {
         data: movies,
         totalPages: Math.ceil(totalMovies / Number(limit)),
         currentPage: Number(page),
