@@ -18,8 +18,8 @@ router.post(
   uploadSingle(imageConfig),
   userController.createUser
 );
-router.get("/v1/users", isAdmin, userController.getAllUsers);
-router.get("/v1/user/:id", isAdmin, userController.getUserById);
+router.get("/v1/users", userController.getAllUsers);
+router.get("/v1/user/:id", userController.getUserById);
 router.put(
   "/v1/user/:id",
   isAdmin,
