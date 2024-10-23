@@ -44,3 +44,8 @@ enum MovieStatus {
   PUBLISHED
   PENDING
 }
+
+model Banner {
+  id    String @id @default(uuid())
+  image String
+}
