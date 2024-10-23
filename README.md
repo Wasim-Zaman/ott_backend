@@ -40,7 +40,7 @@ This project is a robust Movie Management API built with Node.js, Express, and P
 
    ```
    git clone https://github.com/wasim-zaman/ott_backed-api.git project-name
-   cd movie-management-api
+   cd project-name
    ```
 
 2. Install dependencies:
