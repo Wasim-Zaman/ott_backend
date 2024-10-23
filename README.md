@@ -28,11 +28,54 @@ This project is a robust Movie Management API built with Node.js, Express, and P
 
 ## Getting Started
 
-[Installation instructions remain the same]
+### Prerequisites
+
+- Node.js (v14 or later)
+- MySQL database
+- pnpm, npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+
+   ```
+   git clone https://github.com/wasim-zaman/movie-management-api.git
+   cd movie-management-api
+   ```
+
+2. Install dependencies:
+
+   ```
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the following variables:
+
+   ```
+   DATABASE_URL="postgresql://username:password@localhost:3306/your_database"
+   JWT_SECRET="your_jwt_secret"
+   PORT=3000
+   ```
+
+4. Run database migrations:
+
+   ```
+   npx prisma migrate dev
+   ```
+
+5. Start the server:
+   ```
+   npm run dev
+   ```
+
+The server should now be running on `http://localhost:3000`.
 
 ## API Documentation
 
-[API documentation section remains the same]
+The API is documented using Swagger. Once the server is running, you can access the Swagger UI at:
+
+This interface provides detailed information about all available endpoints, request/response schemas, and allows you to test the API directly from the browser.
 
 ## Main Endpoints
 
@@ -111,4 +154,10 @@ This project is a robust Movie Management API built with Node.js, Express, and P
 - id (UUID)
 - image (String)
 
-[Contributing and License sections remain the same]
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
