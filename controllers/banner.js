@@ -35,7 +35,14 @@ exports.createBanner = async (req, res, next) => {
 
 exports.getBanners = async (req, res, next) => {
   try {
-    const banners = await Banner.find().sort({ _id: -1 });
+    const { length } = req.query;
+    let banners;
+
+    if (length) {
+      banners = await Banner.find().sort({ _id: -1 }).limit(parseInt(length));
+    } else {
+      banners = await Banner.find().sort({ _id: -1 });
+    }
 
     if (!banners.length) {
       throw new CustomError("No banners found", 404);

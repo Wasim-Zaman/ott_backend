@@ -87,14 +87,12 @@
  *                 type: string
  *               description:
  *                 type: string
- *               image:
- *                 type: string
- *                 format: binary
- *               movie:
+ *               imageUrl:
  *                 type: string
  *                 format: binary
  *               videoLink:
  *                 type: string
+ *                 format: binary
  *               source:
  *                 type: string
  *               status:
@@ -105,47 +103,69 @@
  *     responses:
  *       201:
  *         description: Movie created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Bad request
+ *         description: Invalid input
  *       401:
  *         description: Unauthorized
- *
+ */
+
+/**
+ * @swagger
+ * /api/movie/v1/movies:
  *   get:
- *     summary: Get all movies with pagination
+ *     summary: Get all movies
  *     tags: [Movies]
  *     parameters:
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number
+ *           default: 1
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Number of items per page
+ *           default: 10
  *       - in: query
  *         name: query
  *         schema:
  *           type: string
- *         description: Search query for name or description
  *       - in: query
  *         name: categoryId
  *         schema:
  *           type: string
- *         description: Filter by category ID
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
- *           enum: [PUBLISHED, PENDING]
- *         description: Filter by movie status
  *     responses:
  *       200:
- *         description: Movies retrieved successfully
+ *         description: List of all movies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Movie'
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *                 totalMovies:
+ *                   type: integer
  *       404:
  *         description: No movies found
- *
+ */
+
+/**
+ * @swagger
  * /api/movie/v1/movie/{id}:
  *   get:
  *     summary: Get a movie by ID
@@ -158,12 +178,15 @@
  *           type: string
  *     responses:
  *       200:
- *         description: Movie found successfully
+ *         description: Movie details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
  *       404:
  *         description: Movie not found
- *
  *   put:
- *     summary: Update a movie by ID
+ *     summary: Update a movie
  *     tags: [Movies]
  *     security:
  *       - bearerAuth: []
@@ -184,14 +207,12 @@
  *                 type: string
  *               description:
  *                 type: string
- *               image:
- *                 type: string
- *                 format: binary
- *               movie:
+ *               imageUrl:
  *                 type: string
  *                 format: binary
  *               videoLink:
  *                 type: string
+ *                 format: binary
  *               source:
  *                 type: string
  *               status:
@@ -202,15 +223,18 @@
  *     responses:
  *       200:
  *         description: Movie updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Bad request
+ *         description: Invalid input
  *       401:
  *         description: Unauthorized
  *       404:
  *         description: Movie not found
- *
  *   delete:
- *     summary: Delete a movie by ID
+ *     summary: Delete a movie
  *     tags: [Movies]
  *     security:
  *       - bearerAuth: []
@@ -227,36 +251,4 @@
  *         description: Unauthorized
  *       404:
  *         description: Movie not found
- *
- * /api/movie/v1/movies/paginated:
- *   get:
- *     summary: Get paginated movies
- *     tags: [Movies]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *         description: Page number
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *         description: Number of items per page
- *       - in: query
- *         name: categoryId
- *         schema:
- *           type: string
- *         description: Filter by category ID
- *       - in: query
- *         name: status
- *         schema:
- *           type: string
- *           enum: [PUBLISHED, PENDING]
- *         description: Filter by movie status
- *     responses:
- *       200:
- *         description: Movies retrieved successfully
- *       404:
- *         description: No movies found
  */

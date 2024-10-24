@@ -53,6 +53,40 @@ exports.getAllCategories = async (req, res, next) => {
   }
 };
 
+exports.getPaginatedCategories = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, query = "" } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const categories = await Category.find({
+      name: { $regex: query, $options: "i" },
+    })
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ name: "asc" });
+
+    const totalCategories = await Category.countDocuments({
+      name: { $regex: query, $options: "i" },
+    });
+
+    if (!categories.length) {
+      throw new CustomError("No categories found", 404);
+    }
+
+    res.status(200).json(
+      response(200, true, "Categories retrieved successfully", {
+        data: categories,
+        totalPages: Math.ceil(totalCategories / Number(limit)),
+        currentPage: Number(page),
+        totalCategories,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in getPaginatedCategories: ${error.message}`);
+    next(error);
+  }
+};
+
 exports.getCategoryById = async (req, res, next) => {
   try {
     const { id } = req.params;

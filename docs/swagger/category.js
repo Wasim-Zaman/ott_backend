@@ -79,49 +79,6 @@
 
 /**
  * @swagger
- * /api/category/v1/categories/paginated:
- *   get:
- *     summary: Get paginated categories
- *     tags: [Categories]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *       - in: query
- *         name: query
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Paginated list of categories
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Category'
- *                 totalPages:
- *                   type: integer
- *                 currentPage:
- *                   type: integer
- *                 totalCategories:
- *                   type: integer
- *       404:
- *         description: No categories found
- */
-
-/**
- * @swagger
  * /api/category/v1/category/{id}:
  *   get:
  *     summary: Get a category by ID

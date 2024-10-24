@@ -35,7 +35,7 @@ exports.createMovie = async (req, res, next) => {
 
     const newMovie = await Movie.create({
       ...value,
-      categoryId: value.categoryId,
+      category: { connect: { id: value.categoryId } },
     });
 
     res
@@ -55,7 +55,7 @@ exports.getMovies = async (req, res, next) => {
     const skip = (Number(page) - 1) * Number(limit);
 
     const where = {
-      $or: [
+      OR: [
         { name: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
       ],
@@ -66,8 +66,7 @@ exports.getMovies = async (req, res, next) => {
     const movies = await Movie.find(where)
       .skip(skip)
       .limit(Number(limit))
-      .sort({ createdAt: -1 })
-      .populate("categoryId");
+      .sort({ createdAt: "desc" });
 
     const totalMovies = await Movie.countDocuments(where);
 

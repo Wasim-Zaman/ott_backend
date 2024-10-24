@@ -122,7 +122,6 @@
  *         description: Unauthorized
  *       404:
  *         description: User not found
- *
  *   put:
  *     summary: Update a user
  *     tags: [Users]
@@ -166,7 +165,6 @@
  *         description: Unauthorized
  *       404:
  *         description: User not found
- *
  *   delete:
  *     summary: Delete a user
  *     tags: [Users]

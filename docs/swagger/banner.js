@@ -80,45 +80,6 @@
 
 /**
  * @swagger
- * /api/banner/v1/banners/paginated:
- *   get:
- *     summary: Get paginated banners
- *     tags: [Banners]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *     responses:
- *       200:
- *         description: Paginated list of banners
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Banner'
- *                 totalPages:
- *                   type: integer
- *                 currentPage:
- *                   type: integer
- *                 totalBanners:
- *                   type: integer
- *       404:
- *         description: No banners found
- */
-
-/**
- * @swagger
  * /api/banner/v1/banner/{id}:
  *   get:
  *     summary: Get a banner by ID

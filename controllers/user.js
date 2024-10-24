@@ -27,16 +27,11 @@ exports.createUser = async (req, res, next) => {
     }
 
     const hashedPassword = await Bcrypt.createPassword(value.password);
-    value.password = hashedPassword;
-
-    const newUser = await User.create(value);
-    const { password, ...userWithoutPassword } = newUser.toObject();
+    const newUser = await User.create({ ...value, password: hashedPassword });
 
     res
       .status(201)
-      .json(
-        response(201, true, "User created successfully", userWithoutPassword)
-      );
+      .json(response(201, true, "User created successfully", newUser));
   } catch (error) {
     if (imagePath) await deleteFile(imagePath);
     console.log(`Error in createUser: ${error.message}`);
@@ -46,7 +41,7 @@ exports.createUser = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select("id name email status image");
+    const users = await User.find();
 
     if (!users.length) {
       throw new CustomError("No users found", 404);
@@ -64,15 +59,13 @@ exports.getAllUsers = async (req, res, next) => {
 exports.getUserById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).select("id name email status image");
+    const user = await User.findById(id);
 
     if (!user) {
       throw new CustomError("User not found", 404);
     }
 
-    res
-      .status(200)
-      .json(response(200, true, "User retrieved successfully", user));
+    res.status(200).json(response(200, true, "User found successfully", user));
   } catch (error) {
     console.log(`Error in getUserById: ${error.message}`);
     next(error);
