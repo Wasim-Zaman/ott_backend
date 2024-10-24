@@ -99,7 +99,6 @@
  *               $ref: '#/components/schemas/Banner'
  *       404:
  *         description: Banner not found
- *
  *   put:
  *     summary: Update a banner
  *     tags: [Banners]
@@ -134,7 +133,6 @@
  *         description: Unauthorized
  *       404:
  *         description: Banner not found
- *
  *   delete:
  *     summary: Delete a banner
  *     tags: [Banners]

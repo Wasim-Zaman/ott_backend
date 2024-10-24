@@ -5,6 +5,8 @@ const JWT = require("../utils/jwt");
 const Bcrypt = require("../utils/bcrypt");
 const Admin = require("../models/Admin");
 
+require("dotenv").config();
+
 exports.createAdmin = async (req, res, next) => {
   const EMAIL = process.env.ADMIN_EMAIL;
   const PASSWORD = process.env.ADMIN_PASSWORD;
@@ -50,7 +52,12 @@ exports.login = async (req, res, next) => {
       throw new CustomError("Invalid password entered", 401);
     }
 
-    const token = JWT.createToken(admin);
+    // Create a plain object for the token payload
+    const tokenPayload = {
+      id: admin._id.toString(), // Convert ObjectId to string
+      email: admin.email,
+    };
+    const token = JWT.createToken(tokenPayload);
 
     res.status(200).json(
       response(200, true, "Login successful", {
@@ -62,7 +69,7 @@ exports.login = async (req, res, next) => {
       })
     );
   } catch (error) {
-    console.log(`Error in login: ${error.message}`);
+    console.log(`Error in login:`, error);
     next(error);
   }
 };
