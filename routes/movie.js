@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { uploadSingle, ALLOWED_FILE_TYPES } = require("multermate");
-const movieController = require("../controllers/movie");
+const movieController = require("../_controllers/movie");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
 

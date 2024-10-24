@@ -1,9 +1,11 @@
-const mongoose = require("mongoose");
-const CustomError = require("../utils/error");
-const response = require("../utils/response");
-const JWT = require("../utils/jwt");
-const Bcrypt = require("../utils/bcrypt");
-const Admin = require("../models/Admin");
+const { PrismaClient } = require('@prisma/client');
+
+const CustomError = require('../utils/error');
+const response = require('../utils/response');
+const JWT = require('../utils/jwt');
+const Bcrypt = require('../utils/bcrypt');
+
+const prisma = new PrismaClient();
 
 exports.createAdmin = async (req, res, next) => {
   const EMAIL = process.env.ADMIN_EMAIL;
@@ -11,12 +13,16 @@ exports.createAdmin = async (req, res, next) => {
 
   try {
     console.log(`Attempting to create admin with email: ${EMAIL}`);
-    const admin = await Admin.findOne({ email: EMAIL });
+    const admin = await prisma.admin.findUnique({
+      where: { email: EMAIL },
+    });
     if (!admin) {
       const hashedPassword = await Bcrypt.createPassword(PASSWORD);
-      await Admin.create({
-        email: EMAIL,
-        password: hashedPassword,
+      await prisma.admin.create({
+        data: {
+          email: EMAIL,
+          password: hashedPassword,
+        },
       });
       console.log(`Admin created with email: ${EMAIL}`);
     } else {
@@ -34,28 +40,27 @@ exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new CustomError("Email and password are required", 400);
+      throw new CustomError('Email and password are required', 400);
     }
 
-    const admin = await Admin.findOne({ email });
+    const admin = await prisma.admin.findUnique({
+      where: { email },
+    });
     if (!admin) {
-      throw new CustomError("No admin found with entered email", 401);
+      throw new CustomError('No admin found with entered email', 401);
     }
 
-    const isPasswordValid = await Bcrypt.comparePassword(
-      password,
-      admin.password
-    );
+    const isPasswordValid = await Bcrypt.comparePassword(password, admin.password);
     if (!isPasswordValid) {
-      throw new CustomError("Invalid password entered", 401);
+      throw new CustomError('Invalid password entered', 401);
     }
 
     const token = JWT.createToken(admin);
 
     res.status(200).json(
-      response(200, true, "Login successful", {
+      response(200, true, 'Login successful', {
         admin: {
-          id: admin._id,
+          id: admin.id,
           email: admin.email,
         },
         token,

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { uploadSingle } = require("multermate");
-const bannerController = require("../controllers/banner");
+const bannerController = require("../_controllers/banner");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
 

@@ -1,9 +1,10 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const Joi = require("joi");
 const { deleteFile } = require("../utils/file");
 const CustomError = require("../utils/error");
 const response = require("../utils/response");
 const Bcrypt = require("../utils/bcrypt");
-const User = require("../models/User");
 
 const userSchema = Joi.object({
   name: Joi.string().required(),
@@ -29,9 +30,11 @@ exports.createUser = async (req, res, next) => {
     const hashedPassword = await Bcrypt.createPassword(value.password);
     value.password = hashedPassword;
 
-    const newUser = await User.create(value);
-    const { password, ...userWithoutPassword } = newUser.toObject();
+    const newUser = await prisma.user.create({
+      data: value,
+    });
 
+    const { password, ...userWithoutPassword } = newUser;
     res
       .status(201)
       .json(
@@ -46,7 +49,15 @@ exports.createUser = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select("id name email status image");
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        image: true,
+      },
+    });
 
     if (!users.length) {
       throw new CustomError("No users found", 404);
@@ -64,7 +75,16 @@ exports.getAllUsers = async (req, res, next) => {
 exports.getUserById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).select("id name email status image");
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        image: true,
+      },
+    });
 
     if (!user) {
       throw new CustomError("User not found", 404);
@@ -99,9 +119,16 @@ exports.updateUser = async (req, res, next) => {
       value.password = await Bcrypt.createPassword(value.password);
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, value, {
-      new: true,
-      select: "id name email status image",
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: value,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        image: true,
+      },
     });
 
     res
@@ -117,7 +144,7 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new CustomError("User not found", 404);
     }
@@ -126,7 +153,7 @@ exports.deleteUser = async (req, res, next) => {
       await deleteFile(user.image);
     }
 
-    await User.findByIdAndDelete(id);
+    await prisma.user.delete({ where: { id } });
     res.status(200).json(response(200, true, "User deleted successfully"));
   } catch (error) {
     console.log(`Error in deleteUser: ${error.message}`);

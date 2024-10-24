@@ -14,6 +14,7 @@ const adminRoutes = require("./routes/admin");
 const movieRoutes = require("./routes/movie");
 const categoryRoutes = require("./routes/category");
 const bannerRoutes = require("./routes/banner");
+const connectDB = require("./config/database");
 
 // Import loggers from config
 const { httpLogger, appLogger } = require("./config/logger");
@@ -76,7 +77,9 @@ app.use((error, req, res, next) => {
 });
 
 // Start the server
-app.listen(PORT, function () {
+app.listen(PORT, async function () {
+  // Connect to MongoDB
+  await connectDB();
   // Use appLogger.info instead of console.log for general info
   appLogger.info(`Server is running on port ${PORT}`);
 });
