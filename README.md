@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a robust Movie Management API built with Node.js, Express, and Prisma ORM. It provides a comprehensive set of endpoints for managing movies, categories, users, banners, and admin authentication. The API supports features such as CRUD operations for movies, categories, users, and banners, as well as file uploads for images and videos.
+This project is a robust Movie Management API built with Node.js, Express, and Mongoose. It provides a comprehensive set of endpoints for managing movies, categories, users, banners, and admin authentication. The API supports features such as CRUD operations for movies, categories, users, and banners, as well as file uploads for images and videos.
 
 ## Features
 
@@ -19,8 +19,8 @@ This project is a robust Movie Management API built with Node.js, Express, and P
 
 - Node.js
 - Express.js
-- Prisma ORM
-- MySQL
+- Mongoose (for MongoDB)
+- MySQL (if still used for other purposes)
 - JSON Web Tokens (JWT) for authentication
 - Multermate for file uploads
 - Joi for request validation
@@ -31,8 +31,8 @@ This project is a robust Movie Management API built with Node.js, Express, and P
 ### Prerequisites
 
 - Node.js (v14 or later)
-- MySQL database
-- pnpm, npm or yarn package manager
+- MongoDB database
+- pnpm, npm, or yarn package manager
 
 ### Installation
 
@@ -53,18 +53,12 @@ This project is a robust Movie Management API built with Node.js, Express, and P
    Create a `.env` file in the root directory and add the following variables:
 
    ```
-   DATABASE_URL="postgresql://username:password@localhost:3306/your_database"
+   MONGODB_URI="mongodb://username:password@localhost:27017/your_database"
    JWT_SECRET="your_jwt_secret"
    PORT=3000
    ```
 
-4. Run database migrations:
-
-   ```
-   npx prisma migrate dev
-   ```
-
-5. Start the server:
+4. Start the server:
    ```
    npm run dev
    ```
@@ -108,7 +102,6 @@ This interface provides detailed information about all available endpoints, requ
 - **Banners**
   - GET `/api/banner/v1/banners`: Get all banners
   - POST `/api/banner/v1/banner`: Create a new banner
-  - GET `/api/banner/v1/banners/paginated`: Get paginated banners
   - GET `/api/banner/v1/banner/:id`: Get a specific banner
   - PUT `/api/banner/v1/banner/:id`: Update a banner
   - DELETE `/api/banner/v1/banner/:id`: Delete a banner
