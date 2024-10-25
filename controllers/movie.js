@@ -34,10 +34,10 @@ exports.createMovie = async (req, res, next) => {
 
     // Handle video based on type
     if (value.videoType === "UPLOAD") {
-      if (!req.files?.video?.[0]) {
+      if (!req.files?.movie?.[0]) {
         throw new CustomError("Video file is required for upload type", 400);
       }
-      videoPath = req.files.video[0].path;
+      videoPath = req.files.movie[0].path;
       value.videoUrl = videoPath;
     } else if (!value.videoUrl) {
       throw new CustomError("Video URL is required for link type", 400);
@@ -138,8 +138,8 @@ exports.updateMovieById = async (req, res, next) => {
 
     // Handle video based on type
     if (value.videoType === "UPLOAD") {
-      if (req.files?.video?.[0]) {
-        videoPath = req.files.video[0].path;
+      if (req.files?.movie?.[0]) {
+        videoPath = req.files.movie[0].path;
         value.videoUrl = videoPath;
         if (existingMovie.videoUrl && existingMovie.videoType === "UPLOAD") {
           await deleteFile(existingMovie.videoUrl);

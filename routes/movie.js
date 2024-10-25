@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { uploadMultiple, ALLOWED_FILE_TYPES } = require("multermate");
+const { uploadMultiple } = require("multermate");
 const movieController = require("../controllers/movie");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
@@ -15,7 +15,7 @@ const uploadConfig = {
       fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
     },
     {
-      name: "video",
+      name: "movie",
       maxCount: 1,
       fileTypes: ["videos"],
     },
