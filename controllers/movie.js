@@ -11,11 +11,13 @@ const movieSchema = Joi.object({
   videoUrl: Joi.string().when("videoType", {
     is: "LINK",
     then: Joi.string().uri().required(),
-    otherwise: Joi.string(),
+    otherwise: Joi.string().allow(null, ""),
   }),
+  image: Joi.any(),
+  movie: Joi.any(),
   categoryId: Joi.string().required(),
   status: Joi.string().valid("PUBLISHED", "PENDING").default("PENDING"),
-});
+}).unknown(true); // Add this to allow additional fields from multer
 
 exports.createMovie = async (req, res, next) => {
   let imagePath, videoPath;

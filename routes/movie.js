@@ -12,7 +12,6 @@ const uploadConfig = {
       name: "image",
       maxCount: 1,
       fileTypes: ["images"],
-      fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
     },
     {
       name: "movie",
