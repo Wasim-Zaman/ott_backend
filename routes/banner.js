@@ -14,20 +14,19 @@ const imageConfig = {
 
 // Banner routes
 router.post(
-  "/v1/banner",
+  "/banner",
   isAdmin,
   uploadSingle(imageConfig),
   bannerController.createBanner
 );
-router.get("/v1/banners", bannerController.getBanners);
-router.get("/v1/banners/paginated", bannerController.getPaginatedBanners);
-router.get("/v1/banner/:id", bannerController.getBannerById);
+router.get("/banners", bannerController.getBanners);
+router.get("/banner/:id", bannerController.getBannerById);
 router.put(
-  "/v1/banner/:id",
+  "/banner/:id",
   isAdmin,
   uploadSingle(imageConfig),
   bannerController.updateBannerById
 );
-router.delete("/v1/banner/:id", isAdmin, bannerController.deleteBannerById);
+router.delete("/banner/:id", isAdmin, bannerController.deleteBannerById);
 
 module.exports = router;
