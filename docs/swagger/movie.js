@@ -14,7 +14,9 @@
  *       required:
  *         - name
  *         - description
+ *         - imageUrl
  *         - videoType
+ *         - videoUrl
  *         - categoryId
  *       properties:
  *         id:
@@ -39,6 +41,7 @@
  *         status:
  *           type: string
  *           enum: [PUBLISHED, PENDING]
+ *           default: PENDING
  *           description: The publication status of the movie
  *         categoryId:
  *           type: string
@@ -86,7 +89,6 @@
  *               - description
  *               - videoType
  *               - categoryId
- *               - image
  *             properties:
  *               name:
  *                 type: string
@@ -99,7 +101,7 @@
  *               videoType:
  *                 type: string
  *                 enum: [UPLOAD, LINK]
- *               video:
+ *               movie:
  *                 type: string
  *                 format: binary
  *                 description: Required when videoType is UPLOAD
