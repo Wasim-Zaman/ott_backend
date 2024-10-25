@@ -7,15 +7,14 @@ const Movie = require("../models/Movie");
 const movieSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
-  imageUrl: Joi.string().required(),
   videoType: Joi.string().valid("UPLOAD", "LINK").required(),
   videoUrl: Joi.string().when("videoType", {
     is: "LINK",
     then: Joi.string().uri().required(),
-    otherwise: Joi.string().required(),
+    otherwise: Joi.string(),
   }),
-  status: Joi.string().valid("PUBLISHED", "PENDING").default("PENDING"),
   categoryId: Joi.string().required(),
+  status: Joi.string().valid("PUBLISHED", "PENDING").default("PENDING"),
 });
 
 exports.createMovie = async (req, res, next) => {
@@ -26,19 +25,22 @@ exports.createMovie = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    // Handle image upload
-    if (req.files && req.files.image) {
-      imagePath = req.files.image[0].path;
-      value.imageUrl = imagePath;
+    // Handle image upload (required)
+    if (!req.files?.image?.[0]) {
+      throw new CustomError("Image is required", 400);
     }
+    imagePath = req.files.image[0].path;
+    value.imageUrl = imagePath;
 
     // Handle video based on type
     if (value.videoType === "UPLOAD") {
-      if (!req.files || !req.files.video) {
+      if (!req.files?.video?.[0]) {
         throw new CustomError("Video file is required for upload type", 400);
       }
       videoPath = req.files.video[0].path;
       value.videoUrl = videoPath;
+    } else if (!value.videoUrl) {
+      throw new CustomError("Video URL is required for link type", 400);
     }
 
     const newMovie = await Movie.create(value);
@@ -125,21 +127,31 @@ exports.updateMovieById = async (req, res, next) => {
       throw new CustomError("Movie not found", 404);
     }
 
-    if (req.files) {
-      if (req.files.image) {
-        imagePath = req.files.image[0].path;
-        value.imageUrl = imagePath;
-        if (existingMovie.imageUrl) {
-          await deleteFile(existingMovie.imageUrl);
-        }
+    // Handle image upload
+    if (req.files?.image?.[0]) {
+      imagePath = req.files.image[0].path;
+      value.imageUrl = imagePath;
+      if (existingMovie.imageUrl) {
+        await deleteFile(existingMovie.imageUrl);
       }
-      if (req.files.movie) {
-        videoPath = req.files.movie[0].path;
-        value.videoLink = videoPath;
-        if (existingMovie.videoLink) {
-          await deleteFile(existingMovie.videoLink);
+    }
+
+    // Handle video based on type
+    if (value.videoType === "UPLOAD") {
+      if (req.files?.video?.[0]) {
+        videoPath = req.files.video[0].path;
+        value.videoUrl = videoPath;
+        if (existingMovie.videoUrl && existingMovie.videoType === "UPLOAD") {
+          await deleteFile(existingMovie.videoUrl);
         }
+      } else if (
+        !existingMovie.videoUrl ||
+        existingMovie.videoType !== "UPLOAD"
+      ) {
+        throw new CustomError("Video file is required for upload type", 400);
       }
+    } else if (!value.videoUrl) {
+      throw new CustomError("Video URL is required for link type", 400);
     }
 
     const updatedMovie = await Movie.findByIdAndUpdate(id, value, {

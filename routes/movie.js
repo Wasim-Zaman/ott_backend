@@ -1,40 +1,44 @@
 const express = require("express");
 const router = express.Router();
-const { uploadSingle, ALLOWED_FILE_TYPES } = require("multermate");
+const { uploadMultiple, ALLOWED_FILE_TYPES } = require("multermate");
 const movieController = require("../_controllers/movie");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
 
-const imageConfig = {
+const uploadConfig = {
   destination: "uploads",
-  filename: "image",
-  fileTypes: ["images"],
-  fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
-};
-
-const videoConfig = {
-  destination: "uploads",
-  filename: "movie",
-  fileTypes: ["videos"],
+  fields: [
+    {
+      name: "image",
+      maxCount: 1,
+      fileTypes: ["images"],
+      fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
+    },
+    {
+      name: "video",
+      maxCount: 1,
+      fileTypes: ["videos"],
+    },
+  ],
 };
 
 // Movie routes
 router.post(
   "/movie",
   isAdmin,
-  uploadSingle(imageConfig),
-  uploadSingle(videoConfig),
+  uploadMultiple(uploadConfig),
   movieController.createMovie
 );
-router.get("/movies", movieController.getMovies);
-router.get("/movie/:id", movieController.getMovieById);
+
 router.put(
   "/movie/:id",
   isAdmin,
-  uploadSingle(imageConfig),
-  uploadSingle(videoConfig),
+  uploadMultiple(uploadConfig),
   movieController.updateMovieById
 );
+
+router.get("/movies", movieController.getMovies);
+router.get("/movie/:id", movieController.getMovieById);
 router.delete("/movie/:id", isAdmin, movieController.deleteMovieById);
 
 module.exports = router;

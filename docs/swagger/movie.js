@@ -14,9 +14,7 @@
  *       required:
  *         - name
  *         - description
- *         - imageUrl
  *         - videoType
- *         - videoUrl
  *         - categoryId
  *       properties:
  *         id:
@@ -30,14 +28,14 @@
  *           description: The description of the movie
  *         imageUrl:
  *           type: string
- *           description: The URL of the movie image
+ *           description: The URL of the movie image (auto-generated from upload)
  *         videoType:
  *           type: string
  *           enum: [UPLOAD, LINK]
- *           description: The type of video (uploaded file or external link)
+ *           description: Whether the video is uploaded or linked externally
  *         videoUrl:
  *           type: string
- *           description: The URL of the video (uploaded file path or external link)
+ *           description: The URL of the video (either uploaded path or external link)
  *         status:
  *           type: string
  *           enum: [PUBLISHED, PENDING]
@@ -48,11 +46,9 @@
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date the movie was added
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: The date the movie was last updated
  */
 
 /**
@@ -90,6 +86,7 @@
  *               - description
  *               - videoType
  *               - categoryId
+ *               - image
  *             properties:
  *               name:
  *                 type: string
@@ -98,25 +95,32 @@
  *               image:
  *                 type: string
  *                 format: binary
+ *                 description: Image file (required)
  *               videoType:
  *                 type: string
  *                 enum: [UPLOAD, LINK]
  *               video:
  *                 type: string
  *                 format: binary
+ *                 description: Required when videoType is UPLOAD
  *               videoUrl:
  *                 type: string
  *                 description: Required when videoType is LINK
  *               status:
  *                 type: string
  *                 enum: [PUBLISHED, PENDING]
+ *                 default: PENDING
  *               categoryId:
  *                 type: string
  *     responses:
  *       201:
  *         description: Movie created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Invalid input
+ *         description: Invalid input or missing required files
  *       401:
  *         description: Unauthorized
  */
@@ -215,14 +219,19 @@
  *                 type: string
  *               description:
  *                 type: string
- *               imageUrl:
+ *               image:
  *                 type: string
  *                 format: binary
- *               videoLink:
+ *               videoType:
+ *                 type: string
+ *                 enum: [UPLOAD, LINK]
+ *               video:
  *                 type: string
  *                 format: binary
- *               source:
+ *                 description: Required when changing to UPLOAD type
+ *               videoUrl:
  *                 type: string
+ *                 description: Required when changing to LINK type
  *               status:
  *                 type: string
  *                 enum: [PUBLISHED, PENDING]
@@ -236,7 +245,7 @@
  *             schema:
  *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Invalid input
+ *         description: Invalid input or missing required files
  *       401:
  *         description: Unauthorized
  *       404:
