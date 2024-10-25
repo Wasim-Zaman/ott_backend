@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { uploadSingle } = require("multermate");
-const categoryController = require("../_controllers/category");
+const categoryController = require("../controllers/category");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
 
