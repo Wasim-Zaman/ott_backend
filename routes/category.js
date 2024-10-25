@@ -14,27 +14,20 @@ const imageConfig = {
 
 // Category routes
 router.post(
-  "/v1/category",
+  "/category",
   isAdmin,
   uploadSingle(imageConfig),
   categoryController.createCategory
 );
-router.get("/v1/categories", categoryController.getAllCategories);
-router.get(
-  "/v1/categories/paginated",
-  categoryController.getPaginatedCategories
-);
-router.get("/v1/category/:id", categoryController.getCategoryById);
+router.get("/categories", categoryController.getAllCategories);
+router.get("/categories/paginated", categoryController.getPaginatedCategories);
+router.get("/category/:id", categoryController.getCategoryById);
 router.put(
-  "/v1/category/:id",
+  "/category/:id",
   isAdmin,
   uploadSingle(imageConfig),
   categoryController.updateCategoryById
 );
-router.delete(
-  "/v1/category/:id",
-  isAdmin,
-  categoryController.deleteCategoryById
-);
+router.delete("/category/:id", isAdmin, categoryController.deleteCategoryById);
 
 module.exports = router;
