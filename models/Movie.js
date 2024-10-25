@@ -10,9 +10,16 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    imageUrl: String,
-    videoLink: String,
-    source: {
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+    videoType: {
+      type: String,
+      enum: ["UPLOAD", "LINK"],
+      required: true,
+    },
+    videoUrl: {
       type: String,
       required: true,
     },

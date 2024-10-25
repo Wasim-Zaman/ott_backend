@@ -14,7 +14,9 @@
  *       required:
  *         - name
  *         - description
- *         - source
+ *         - imageUrl
+ *         - videoType
+ *         - videoUrl
  *         - categoryId
  *       properties:
  *         id:
@@ -29,12 +31,13 @@
  *         imageUrl:
  *           type: string
  *           description: The URL of the movie image
- *         videoLink:
+ *         videoType:
  *           type: string
- *           description: The URL of the movie video or external link
- *         source:
+ *           enum: [UPLOAD, LINK]
+ *           description: The type of video (uploaded file or external link)
+ *         videoUrl:
  *           type: string
- *           description: The source of the movie
+ *           description: The URL of the video (uploaded file path or external link)
  *         status:
  *           type: string
  *           enum: [PUBLISHED, PENDING]
@@ -82,19 +85,28 @@
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - videoType
+ *               - categoryId
  *             properties:
  *               name:
  *                 type: string
  *               description:
  *                 type: string
- *               imageUrl:
+ *               image:
  *                 type: string
  *                 format: binary
- *               videoLink:
+ *               videoType:
+ *                 type: string
+ *                 enum: [UPLOAD, LINK]
+ *               video:
  *                 type: string
  *                 format: binary
- *               source:
+ *               videoUrl:
  *                 type: string
+ *                 description: Required when videoType is LINK
  *               status:
  *                 type: string
  *                 enum: [PUBLISHED, PENDING]
@@ -103,10 +115,6 @@
  *     responses:
  *       201:
  *         description: Movie created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Movie'
  *       400:
  *         description: Invalid input
  *       401:

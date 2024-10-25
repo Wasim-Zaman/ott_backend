@@ -7,9 +7,13 @@ const Movie = require("../models/Movie");
 const movieSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
-  imageUrl: Joi.string().uri().optional(),
-  videoLink: Joi.string().uri().optional(),
-  source: Joi.string().required(),
+  imageUrl: Joi.string().required(),
+  videoType: Joi.string().valid("UPLOAD", "LINK").required(),
+  videoUrl: Joi.string().when("videoType", {
+    is: "LINK",
+    then: Joi.string().uri().required(),
+    otherwise: Joi.string().required(),
+  }),
   status: Joi.string().valid("PUBLISHED", "PENDING").default("PENDING"),
   categoryId: Joi.string().required(),
 });
@@ -22,21 +26,22 @@ exports.createMovie = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    if (req.files) {
-      if (req.files.image) {
-        imagePath = req.files.image[0].path;
-        value.imageUrl = imagePath;
-      }
-      if (req.files.movie) {
-        videoPath = req.files.movie[0].path;
-        value.videoLink = videoPath;
-      }
+    // Handle image upload
+    if (req.files && req.files.image) {
+      imagePath = req.files.image[0].path;
+      value.imageUrl = imagePath;
     }
 
-    const newMovie = await Movie.create({
-      ...value,
-      category: { connect: { id: value.categoryId } },
-    });
+    // Handle video based on type
+    if (value.videoType === "UPLOAD") {
+      if (!req.files || !req.files.video) {
+        throw new CustomError("Video file is required for upload type", 400);
+      }
+      videoPath = req.files.video[0].path;
+      value.videoUrl = videoPath;
+    }
+
+    const newMovie = await Movie.create(value);
 
     res
       .status(201)
