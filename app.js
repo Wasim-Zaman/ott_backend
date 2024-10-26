@@ -14,6 +14,8 @@ const adminRoutes = require("./routes/admin");
 const movieRoutes = require("./routes/movie");
 const categoryRoutes = require("./routes/category");
 const bannerRoutes = require("./routes/banner");
+const userRoutes = require("./routes/user");
+const countRoutes = require("./routes/count");
 const connectDB = require("./config/database");
 
 // Import loggers from config
@@ -47,6 +49,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/movie/v1", movieRoutes);
 app.use("/api/category/v1", categoryRoutes);
 app.use("/api/banner/v1", bannerRoutes);
+app.use("/api/user/v1", userRoutes);
+app.use("/api/count/v1", countRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Handle 404 errors

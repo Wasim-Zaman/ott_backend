@@ -5,7 +5,7 @@ const response = require("../utils/response");
 const Banner = require("../models/Banner");
 
 const bannerSchema = Joi.object({
-  image: Joi.string().required(),
+  image: Joi.string().optional(),
 });
 
 exports.createBanner = async (req, res, next) => {
