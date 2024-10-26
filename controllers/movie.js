@@ -63,12 +63,14 @@ exports.getMovies = async (req, res, next) => {
     const { page = 1, limit = 10, query = "", categoryId, status } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
-    const where = {
-      OR: [
+    // Fix the query construction
+    const where = {};
+    if (query) {
+      where.$or = [
         { name: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
-      ],
-    };
+      ];
+    }
     if (categoryId) where.categoryId = categoryId;
     if (status) where.status = status;
 
@@ -78,10 +80,6 @@ exports.getMovies = async (req, res, next) => {
       .sort({ createdAt: "desc" });
 
     const totalMovies = await Movie.countDocuments(where);
-
-    if (!movies.length) {
-      throw new CustomError("No movies found", 404);
-    }
 
     res.status(200).json(
       response(200, true, "Movies retrieved successfully", {
