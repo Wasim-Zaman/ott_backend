@@ -30,9 +30,9 @@ const limiter = rateLimit({
 });
 
 // Apply the rate limiter to all requests
-// app.use(limiter);
+app.use(limiter);
 // Use Helmet!
-// app.use(helmet());
+app.use(helmet());
 
 // Middleware setup
 app.use(express.json());
