@@ -11,6 +11,7 @@ This project is a robust Movie Management API built with Node.js, Express, and M
 - Movie management (create, read, update, delete)
 - Category management (create, read, update, delete)
 - Banner management (create, read, update, delete)
+- Statistics (get counts of all entities)
 - File uploads for images and videos
 - Pagination and search functionality
 - Swagger documentation for easy API exploration
@@ -20,7 +21,6 @@ This project is a robust Movie Management API built with Node.js, Express, and M
 - Node.js
 - Express.js
 - Mongoose (for MongoDB)
-- MySQL (if still used for other purposes)
 - JSON Web Tokens (JWT) for authentication
 - Multermate for file uploads
 - Joi for request validation
@@ -38,28 +38,30 @@ This project is a robust Movie Management API built with Node.js, Express, and M
 
 1. Clone the repository:
 
-   ```
-   git clone https://github.com/wasim-zaman/ott_backed-api.git project-name
+   ```bash
+   git clone https://github.com/wasim-zaman/ott_backend.git project-name
    cd project-name
    ```
 
 2. Install dependencies:
 
-   ```
+   ```bash
    npm install
    ```
 
 3. Set up environment variables:
    Create a `.env` file in the root directory and add the following variables:
 
-   ```
+   ```env
    MONGODB_URI="mongodb://username:password@localhost:27017/your_database"
    JWT_SECRET="your_jwt_secret"
    PORT=3000
+   ADMIN_EMAIL="admin@example.com"
+   ADMIN_PASSWORD="your_admin_password"
    ```
 
 4. Start the server:
-   ```
+   ```bash
    npm run dev
    ```
 
@@ -68,43 +70,47 @@ The server should now be running on `http://localhost:3000`.
 ## API Documentation
 
 The API is documented using Swagger. Once the server is running, you can access the Swagger UI at:
-
-This interface provides detailed information about all available endpoints, request/response schemas, and allows you to test the API directly from the browser.
+`http://localhost:3000/api-docs`
 
 ## Main Endpoints
 
-- **Admin Authentication**
+### Admin Authentication
 
-  - POST `/api/admin/v1/login`: Login admin
+- POST `/api/admin/v1/login`: Login admin
 
-- **Users**
+### Users
 
-  - GET `/api/user/v1/users`: Get all users
-  - POST `/api/user/v1/user`: Create a new user
-  - GET `/api/user/v1/user/:id`: Get a specific user
-  - PUT `/api/user/v1/user/:id`: Update a user
-  - DELETE `/api/user/v1/user/:id`: Delete a user
+- GET `/api/user/v1/users`: Get all users
+- POST `/api/user/v1/user`: Create a new user
+- GET `/api/user/v1/user/:id`: Get a specific user
+- PUT `/api/user/v1/user/:id`: Update a user
+- DELETE `/api/user/v1/user/:id`: Delete a user
 
-- **Movies**
+### Movies
 
-  - GET `/api/movie/movies`: Get all movies (with pagination and search)
-  - POST `/api/movie/movie`: Create a new movie
-  - GET `/api/movie/movie/:id`: Get a specific movie
-  - PUT `/api/movie/movie/:id`: Update a movie
-  - DELETE `/api/movie/movie/:id`: Delete a movie
+- GET `/api/movie/v1/movies`: Get all movies (with pagination and search)
+- POST `/api/movie/v1/movie`: Create a new movie
+- GET `/api/movie/v1/movie/:id`: Get a specific movie
+- PUT `/api/movie/v1/movie/:id`: Update a movie
+- DELETE `/api/movie/v1/movie/:id`: Delete a movie
 
-- **Categories**
+### Categories
 
-  - GET `/api/category/v1/categories`: Get all categories
-  - POST `/api/category/v1/category`: Create a new category
-  - GET `/api/category/v1/categories/paginated`: Get paginated categories
+- GET `/api/category/v1/categories`: Get all categories
+- POST `/api/category/v1/category`: Create a new category
+- GET `/api/category/v1/categories/paginated`: Get paginated categories
 
-- **Banners**
-  - GET `/api/banner/v1/banners`: Get all banners
-  - POST `/api/banner/v1/banner`: Create a new banner
-  - GET `/api/banner/v1/banner/:id`: Get a specific banner
-  - PUT `/api/banner/v1/banner/:id`: Update a banner
-  - DELETE `/api/banner/v1/banner/:id`: Delete a banner
+### Banners
+
+- GET `/api/banner/v1/banners`: Get all banners
+- POST `/api/banner/v1/banner`: Create a new banner
+- GET `/api/banner/v1/banner/:id`: Get a specific banner
+- PUT `/api/banner/v1/banner/:id`: Update a banner
+- DELETE `/api/banner/v1/banner/:id`: Delete a banner
+
+### Statistics
+
+- GET `/api/counts/v1`: Get total counts of all entities
 
 ## Data Models
 
