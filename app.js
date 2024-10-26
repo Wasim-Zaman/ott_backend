@@ -50,7 +50,7 @@ app.use("/api/movie/v1", movieRoutes);
 app.use("/api/category/v1", categoryRoutes);
 app.use("/api/banner/v1", bannerRoutes);
 app.use("/api/user/v1", userRoutes);
-app.use("/api/count/v1", countRoutes);
+app.use("/api/counts/v1", countRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Handle 404 errors
