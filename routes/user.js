@@ -13,19 +13,19 @@ const imageConfig = {
 };
 
 router.post(
-  "/v1/user",
+  "/user",
   isAdmin,
   uploadSingle(imageConfig),
   userController.createUser
 );
-router.get("/v1/users", userController.getAllUsers);
-router.get("/v1/user/:id", userController.getUserById);
+router.get("/users", userController.getAllUsers);
+router.get("/user/:id", userController.getUserById);
 router.put(
-  "/v1/user/:id",
+  "/user/:id",
   isAdmin,
   uploadSingle(imageConfig),
   userController.updateUser
 );
-router.delete("/v1/user/:id", isAdmin, userController.deleteUser);
+router.delete("/user/:id", isAdmin, userController.deleteUser);
 
 module.exports = router;

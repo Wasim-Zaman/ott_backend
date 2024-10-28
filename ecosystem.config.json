@@ -1,0 +1,21 @@
+{
+  "apps": [
+    {
+      "name": "ott-app",
+      "script": "app.js",
+      "instances": "1",
+      "exec_mode": "cluster",
+      "watch": false,
+      "max_memory_restart": "1G",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      },
+      "env_development": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}
