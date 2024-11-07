@@ -22,55 +22,84 @@ This project is a robust Movie Management API built with Node.js, Express, and M
 - Express.js
 - Mongoose (for MongoDB)
 - JSON Web Tokens (JWT) for authentication
-- Multermate for file uploads
+- Multer for file uploads
 - Joi for request validation
 - Swagger for API documentation
+- Docker for containerization
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or later)
-- MongoDB database
-- pnpm, npm, or yarn package manager
+- Docker and Docker Compose
+- Git
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/wasim-zaman/ott_backend.git project-name
-   cd project-name
+   git clone https://github.com/wasim-zaman/ott_backend.git
+   cd ott_backend
    ```
 
-2. Install dependencies:
+2. Create `.env` file in the root directory:
+
+   ```env
+   PORT=4080
+   JWT_SECRET=your_jwt_secret
+   MONGO_INITDB_ROOT_USERNAME=root
+   MONGO_INITDB_ROOT_PASSWORD=your_password
+   ADMIN_EMAIL="admin@ott.com"
+   ADMIN_PASSWORD="admin"
+   DOMAIN="your_domain"
+   LOCAL_HOST="http://localhost:4080"
+   EMAIL="your_email@example.com"
+   ```
+
+3. Start the application using Docker:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+The server will be running on `http://localhost:4080`
+
+### Running Without Docker
+
+If you prefer to run without Docker:
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-3. Set up environment variables:
-   Create a `.env` file in the root directory and add the following variables:
-
-   ```env
-   MONGODB_URI="mongodb://username:password@localhost:27017/your_database"
-   JWT_SECRET="your_jwt_secret"
-   PORT=3000
-   ADMIN_EMAIL="admin@example.com"
-   ADMIN_PASSWORD="your_admin_password"
-   ```
-
-4. Start the server:
+2. Start the server:
    ```bash
-   npm run dev
+   npm start
    ```
 
-The server should now be running on `http://localhost:3000`.
+## Project Structure
+
+```
+.
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
+├── .env
+├── app.js
+├── routes/
+├── controllers/
+├── models/
+├── middleware/
+├── uploads/
+└── ...
+```
 
 ## API Documentation
 
 The API is documented using Swagger. Once the server is running, you can access the Swagger UI at:
-`http://localhost:3000/api-docs`
+`http://localhost:4080/api-docs`
 
 ## Main Endpoints
 
@@ -160,3 +189,44 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License.
+
+## Docker Configuration
+
+### Services
+
+1. **API Service (ott-api)**
+
+   - Node.js application
+   - Runs on port specified in .env
+   - Auto-reload enabled in development
+
+2. **MongoDB Service**
+   - Latest MongoDB image
+   - Persistent data storage
+   - Secured with authentication
+
+### Volumes
+
+- `data`: Persistent MongoDB data
+- `uploads`: Persistent storage for uploaded files
+- Local volume mapping for development
+
+## Development
+
+For development, the application supports hot-reloading through nodemon. Any changes to the source code will automatically restart the server.
+
+### Docker Commands
+
+```bash
+# Build and start services
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Remove volumes
+docker-compose down -v
+```
