@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const CustomError = require("../utils/error");
 const response = require("../utils/response");
 const JWT = require("../utils/jwt");

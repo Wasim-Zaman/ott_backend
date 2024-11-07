@@ -5,18 +5,21 @@ require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      heartbeatFrequencyMS: 2000,
-      maxPoolSize: 10,
-      minPoolSize: 2,
-      socketTimeoutMS: 45000,
-      family: 4,
-      retryWrites: true,
-      w: "majority",
-    });
+    await mongoose.connect(
+      `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongodb/ott?authSource=admin&retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000,
+        heartbeatFrequencyMS: 2000,
+        maxPoolSize: 10,
+        minPoolSize: 2,
+        socketTimeoutMS: 45000,
+        family: 4,
+        retryWrites: true,
+        w: "majority",
+      }
+    );
     appLogger.info("MongoDB connected successfully");
 
     // Handle connection events

@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo
+    env_file:
+      - .env
+    volumes:
+      - data:/data/db
+    ports:
+      - "27017:27017"
+  
+  ott-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - uploads:/app/uploads
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - mongodb
+
+volumes:
+  data:
+  uploads:
